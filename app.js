@@ -3,10 +3,7 @@ const API =
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Initialize Materialize Select
-  M.FormSelect.init(
-    document.querySelectorAll("select")
-  );
+  M.AutoInit();
 
   loadQuestions();
 
@@ -19,9 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-/* ==========================
+/* =====================================
    LOAD QUESTIONS
-========================== */
+===================================== */
 
 async function loadQuestions() {
 
@@ -34,7 +31,9 @@ async function loadQuestions() {
       await response.json();
 
     const select =
-      document.getElementById("question");
+      document.getElementById(
+        "question"
+      );
 
     select.innerHTML =
       '<option value="" disabled selected>Select Question</option>';
@@ -42,108 +41,232 @@ async function loadQuestions() {
     questions.forEach(question => {
 
       const option =
-        document.createElement("option");
+        document.createElement(
+          "option"
+        );
 
-      option.value = question;
-      option.textContent = question;
+      option.value =
+        question;
 
-      select.appendChild(option);
+      option.textContent =
+        question;
+
+      select.appendChild(
+        option
+      );
 
     });
 
-    // Refresh Materialize Select
     M.FormSelect.init(
-      document.querySelectorAll("select")
+      document.querySelectorAll(
+        "select"
+      )
     );
 
   } catch (err) {
 
-    console.error("Load Error:", err);
+    console.error(err);
 
-    document.getElementById("message").innerHTML = `
-      <div class="card-panel red lighten-4 red-text text-darken-4">
-        Failed to load questions.
-      </div>
-    `;
+    M.toast({
+      html:
+        "Unable to load questions",
+      classes:
+        "red"
+    });
   }
 }
 
-/* ==========================
+/* =====================================
+   FILE TO BASE64
+===================================== */
+
+function fileToBase64(file) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        () =>
+          resolve(
+            reader.result
+          );
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+}
+
+/* =====================================
    SUBMIT FORM
-========================== */
+===================================== */
 
 async function submitForm(e) {
 
   e.preventDefault();
 
   const btn =
-    document.getElementById("submitBtn");
+    document.getElementById(
+      "submitBtn"
+    );
 
   const msg =
-    document.getElementById("message");
+    document.getElementById(
+      "message"
+    );
 
   btn.disabled = true;
 
-  btn.innerHTML = `
-    <i class="material-icons left">hourglass_top</i>
-    Submitting...
-  `;
+  btn.innerHTML =
+    "Submitting...";
 
   msg.innerHTML = "";
 
-  const data = {
-
-    customerId:
-      document
-        .getElementById("customerId")
-        .value
-        .trim(),
-
-    name:
-      document
-        .getElementById("name")
-        .value
-        .trim(),
-
-    email:
-      document
-        .getElementById("email")
-        .value
-        .trim(),
-
-    birthdate:
-      document
-        .getElementById("birthdate")
-        .value,
-
-    birthtime:
-      document
-        .getElementById("birthtime")
-        .value,
-
-    birthplace:
-      document
-        .getElementById("birthplace")
-        .value
-        .trim(),
-
-    question:
-      document
-        .getElementById("question")
-        .value
-  };
-
   try {
 
-    const params =
-      new URLSearchParams({
-        action: "save",
-        ...data
-      });
+    const imageFile =
+      document
+        .getElementById(
+          "image"
+        )
+        ?.files[0];
+
+    let imageData = "";
+
+    /* ==========================
+       IMAGE VALIDATION
+    ========================== */
+
+    if (imageFile) {
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      const maxSize =
+        1.5 * 1024 * 1024;
+
+      if (
+        !allowedTypes.includes(
+          imageFile.type
+        )
+      ) {
+
+        throw new Error(
+          "Only JPG, PNG and WEBP images are allowed."
+        );
+      }
+
+      if (
+        imageFile.size >
+        maxSize
+      ) {
+
+        throw new Error(
+          "Image must be less than 1.5 MB."
+        );
+      }
+
+      imageData =
+        await fileToBase64(
+          imageFile
+        );
+    }
+
+    /* ==========================
+       FORM DATA
+    ========================== */
+
+    const data = {
+
+      customerId:
+        document
+          .getElementById(
+            "customerId"
+          )
+          .value
+          .trim(),
+
+      name:
+        document
+          .getElementById(
+            "name"
+          )
+          .value
+          .trim(),
+
+      email:
+        document
+          .getElementById(
+            "email"
+          )
+          .value
+          .trim(),
+
+      birthdate:
+        document
+          .getElementById(
+            "birthdate"
+          )
+          .value,
+
+      birthtime:
+        document
+          .getElementById(
+            "birthtime"
+          )
+          .value,
+
+      birthplace:
+        document
+          .getElementById(
+            "birthplace"
+          )
+          .value
+          .trim(),
+
+      question:
+        document
+          .getElementById(
+            "question"
+          )
+          .value,
+
+      imageData:
+        imageData
+    };
+
+    /* ==========================
+       SEND TO APPS SCRIPT
+    ========================== */
 
     const response =
       await fetch(
-        `${API}?${params.toString()}`
+        API,
+        {
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "text/plain"
+          },
+
+          body:
+            JSON.stringify(
+              data
+            )
+        }
       );
 
     const result =
@@ -151,55 +274,66 @@ async function submitForm(e) {
 
     console.log(result);
 
-    if (result.success) {
+    if (
+      result.success
+    ) {
 
       msg.innerHTML = `
         <div class="card-panel green lighten-4 green-text text-darken-4">
-          <strong>Success!</strong><br>
           ${result.message}
         </div>
       `;
 
+      M.toast({
+        html:
+          "Registration submitted successfully",
+        classes:
+          "green"
+      });
+
       document
-        .getElementById("fortuneForm")
+        .getElementById(
+          "fortuneForm"
+        )
         .reset();
 
-      // Reset Materialize fields
       M.updateTextFields();
 
       M.FormSelect.init(
-        document.querySelectorAll("select")
+        document.querySelectorAll(
+          "select"
+        )
       );
-
-      M.toast({
-        html: "Registration submitted successfully!",
-        classes: "green"
-      });
 
     } else {
 
-      msg.innerHTML = `
-        <div class="card-panel red lighten-4 red-text text-darken-4">
-          ${result.message}
-        </div>
-      `;
+      throw new Error(
+        result.message
+      );
     }
 
   } catch (err) {
 
-    console.error(err);
+    console.error(
+      err
+    );
 
     msg.innerHTML = `
       <div class="card-panel red lighten-4 red-text text-darken-4">
-        ${err.toString()}
+        ${err.message}
       </div>
     `;
+
+    M.toast({
+      html:
+        err.message,
+      classes:
+        "red"
+    });
   }
 
   btn.disabled = false;
 
-  btn.innerHTML = `
-    <i class="material-icons left">send</i>
-    Book Now
-  `;
+  btn.innerHTML =
+    "BOOK NOW";
 }
