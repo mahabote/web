@@ -1,89 +1,180 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Fortune Telling Registration</title>
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Materialize CSS -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
+
+  <style>
+
+    body{
+      background:#f5f5f5;
+      min-height:100vh;
+      padding:40px 10px;
+    }
+
+    .card-panel-custom{
+      padding:35px;
+      border-radius:15px;
+    }
+
+    .page-title{
+      text-align:center;
+      margin-bottom:30px;
+      font-weight:300;
+    }
+
+    .submit-btn{
+      width:100%;
+    }
+
+    #message{
+      margin-top:20px;
+    }
+
+    .success-card{
+      background:#e8f5e9;
+      color:#2e7d32;
+      padding:15px;
+      border-radius:8px;
+    }
+
+    .error-card{
+      background:#ffebee;
+      color:#c62828;
+      padding:15px;
+      border-radius:8px;
+    }
+
+  </style>
 </head>
-
 <body>
 
 <div class="container">
 
-  <div class="card">
+  <div class="row">
 
-    <h1>Fortune Telling Registration</h1>
+    <div class="col s12 m10 offset-m1 l8 offset-l2">
 
-    <form id="fortuneForm">
+      <div class="card card-panel-custom z-depth-3">
 
-      <input
-        id="name"
-        type="text"
-        placeholder="Full Name"
-        >
+        <h4 class="page-title purple-text">
+          Fortune Telling Registration
+        </h4>
 
-      <input
-        id="customerId"
-        type="text"
-        placeholder="ID Number"
-        >
+        <form id="fortuneForm">
 
-      <input
-        id="email"
-        type="email"
-        placeholder="Email"
-        >
+          <div class="row">
 
-      <label>Birth Date</label>
+            <div class="input-field col s12 m6">
+              <i class="material-icons prefix">person</i>
+              <input id="name" type="text" >
+              <label for="name">Full Name</label>
+            </div>
 
-      <input
-        id="birthdate"
-        type="date"
-        >
+            <div class="input-field col s12 m6">
+              <i class="material-icons prefix">badge</i>
+              <input id="customerId" type="text" >
+              <label for="customerId">ID Number</label>
+            </div>
 
-      <label>Birth Time</label>
+          </div>
 
-      <input
-        id="birthtime"
-        type="time">
+          <div class="row">
 
-      <input
-        id="birthplace"
-        type="text"
-        placeholder="Birth Place"
-        >
+            <div class="input-field col s12">
+              <i class="material-icons prefix">email</i>
+              <input id="email" type="email" >
+              <label for="email">Email</label>
+            </div>
 
-      <select
-        id="question"
-        >
+          </div>
 
-        <option>
-          Loading...
-        </option>
+          <div class="row">
 
-      </select>
+            <div class="input-field col s12 m6">
+              <input id="birthdate" type="date" >
+            </div>
 
-      <button
-        id="submitBtn"
-        type="submit">
+            <div class="input-field col s12 m6">
+              <input id="birthtime" type="time">
+            </div>
 
-        Book Now
+          </div>
 
-      </button>
+          <div class="row">
 
-    </form>
+            <div class="input-field col s12 m6">
+              <i class="material-icons prefix">place</i>
+              <input id="birthplace" type="text" >
+              <label for="birthplace">Birth Place</label>
+            </div>
 
-    <div id="message"></div>
+            <div class="input-field col s12 m6">
+
+              <select id="question">
+                <option value="" disabled selected>
+                  Select Question
+                </option>
+              </select>
+
+              <label>Question Category</label>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col s12">
+
+              <button
+                id="submitBtn"
+                class="btn-large waves-effect waves-light purple submit-btn"
+                type="submit">
+
+                <i class="material-icons left">send</i>
+                Book Now
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </form>
+
+        <div id="message"></div>
+
+      </div>
+
+    </div>
 
   </div>
 
 </div>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  M.AutoInit();
+
+});
+
+</script>
 
 <script src="app.js"></script>
 
