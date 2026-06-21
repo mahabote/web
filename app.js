@@ -3,37 +3,41 @@ const API =
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Initialize Materialize Select
+  M.FormSelect.init(
+    document.querySelectorAll("select")
+  );
+
   loadQuestions();
 
-  const form = document.getElementById("fortuneForm");
-
-  if (form) {
-    form.addEventListener("submit", submitForm);
-  }
+  document
+    .getElementById("fortuneForm")
+    .addEventListener(
+      "submit",
+      submitForm
+    );
 
 });
 
-/* =========================
-   Load Dropdown Questions
-========================= */
+/* ==========================
+   LOAD QUESTIONS
+========================== */
 
 async function loadQuestions() {
 
   try {
 
-    const response = await fetch(API);
+    const response =
+      await fetch(API);
 
-    const questions = await response.json();
-
-    console.log("Questions:", questions);
+    const questions =
+      await response.json();
 
     const select =
       document.getElementById("question");
 
-    if (!select) return;
-
     select.innerHTML =
-      '<option value="">Select Question</option>';
+      '<option value="" disabled selected>Select Question</option>';
 
     questions.forEach(question => {
 
@@ -47,25 +51,26 @@ async function loadQuestions() {
 
     });
 
+    // Refresh Materialize Select
+    M.FormSelect.init(
+      document.querySelectorAll("select")
+    );
+
   } catch (err) {
 
-    console.error("LOAD ERROR:", err);
+    console.error("Load Error:", err);
 
-    const msg =
-      document.getElementById("message");
-
-    if (msg) {
-      msg.innerHTML =
-        `<div class="error">
-          Failed to load questions.
-        </div>`;
-    }
+    document.getElementById("message").innerHTML = `
+      <div class="card-panel red lighten-4 red-text text-darken-4">
+        Failed to load questions.
+      </div>
+    `;
   }
 }
 
-/* =========================
-   Submit Form
-========================= */
+/* ==========================
+   SUBMIT FORM
+========================== */
 
 async function submitForm(e) {
 
@@ -78,33 +83,54 @@ async function submitForm(e) {
     document.getElementById("message");
 
   btn.disabled = true;
-  btn.textContent = "Submitting...";
+
+  btn.innerHTML = `
+    <i class="material-icons left">hourglass_top</i>
+    Submitting...
+  `;
 
   msg.innerHTML = "";
 
   const data = {
 
     customerId:
-      document.getElementById("customerId").value.trim(),
+      document
+        .getElementById("customerId")
+        .value
+        .trim(),
 
     name:
-      document.getElementById("name").value.trim(),
+      document
+        .getElementById("name")
+        .value
+        .trim(),
 
     email:
-      document.getElementById("email").value.trim(),
+      document
+        .getElementById("email")
+        .value
+        .trim(),
 
     birthdate:
-      document.getElementById("birthdate").value,
+      document
+        .getElementById("birthdate")
+        .value,
 
     birthtime:
-      document.getElementById("birthtime").value,
+      document
+        .getElementById("birthtime")
+        .value,
 
     birthplace:
-      document.getElementById("birthplace").value.trim(),
+      document
+        .getElementById("birthplace")
+        .value
+        .trim(),
 
     question:
-      document.getElementById("question").value
-
+      document
+        .getElementById("question")
+        .value
   };
 
   try {
@@ -115,68 +141,65 @@ async function submitForm(e) {
         ...data
       });
 
-    const requestUrl =
-      `${API}?${params.toString()}`;
-
-    console.log("REQUEST URL:");
-    console.log(requestUrl);
-
     const response =
-      await fetch(requestUrl);
+      await fetch(
+        `${API}?${params.toString()}`
+      );
 
-    const text =
-      await response.text();
+    const result =
+      await response.json();
 
-    console.log("SERVER RESPONSE:");
-    console.log(text);
-
-    let result;
-
-    try {
-
-      result = JSON.parse(text);
-
-    } catch (jsonError) {
-
-      console.error("JSON PARSE ERROR:", jsonError);
-
-      msg.innerHTML =
-        `<div class="error">
-          Invalid response from server.
-        </div>`;
-
-      return;
-    }
+    console.log(result);
 
     if (result.success) {
 
-      msg.innerHTML =
-        `<div class="success">
+      msg.innerHTML = `
+        <div class="card-panel green lighten-4 green-text text-darken-4">
+          <strong>Success!</strong><br>
           ${result.message}
-        </div>`;
+        </div>
+      `;
 
       document
         .getElementById("fortuneForm")
         .reset();
 
+      // Reset Materialize fields
+      M.updateTextFields();
+
+      M.FormSelect.init(
+        document.querySelectorAll("select")
+      );
+
+      M.toast({
+        html: "Registration submitted successfully!",
+        classes: "green"
+      });
+
     } else {
 
-      msg.innerHTML =
-        `<div class="error">
-          ${result.message || "Unknown server error"}
-        </div>`;
+      msg.innerHTML = `
+        <div class="card-panel red lighten-4 red-text text-darken-4">
+          ${result.message}
+        </div>
+      `;
     }
 
   } catch (err) {
 
-    console.error("SUBMIT ERROR:", err);
+    console.error(err);
 
-    msg.innerHTML =
-      `<div class="error">
+    msg.innerHTML = `
+      <div class="card-panel red lighten-4 red-text text-darken-4">
         ${err.toString()}
-      </div>`;
+      </div>
+    `;
   }
 
   btn.disabled = false;
-  btn.textContent = "Book Now";
+
+  btn.innerHTML = `
+    <i class="material-icons left">send</i>
+    Book Now
+  `;
 }
