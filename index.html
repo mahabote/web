@@ -1,87 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Fortune Telling Registration</title>
 
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="card">
+  <div class="card">
 
-      <h1>Fortune Telling Registration</h1>
+    <h1>Fortune Telling Registration</h1>
 
-      <form id="fortuneForm">
+    <form id="fortuneForm">
 
-        <input
-          id="name"
-          type="text"
-          placeholder="Full Name"
-          required>
+      <input
+        id="name"
+        type="text"
+        placeholder="Full Name"
+        >
 
-        <input
-          id="customerId"
-          type="text"
-          placeholder="ID Number"
-          required>
+      <input
+        id="customerId"
+        type="text"
+        placeholder="ID Number"
+        >
 
-        <input
-          id="email"
-          type="email"
-          placeholder="Email Address"
-          required>
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        >
 
-        <label>Birth Date</label>
-        <input
-          id="birthdate"
-          type="date"
-          required>
+      <label>Birth Date</label>
 
-        <label>Birth Time</label>
-        <input
-          id="birthtime"
-          type="time">
+      <input
+        id="birthdate"
+        type="date"
+        >
 
-        <input
-          id="birthplace"
-          type="text"
-          placeholder="Birth Place"
-          required>
+      <label>Birth Time</label>
 
-        <select
-          id="question"
-          required>
+      <input
+        id="birthtime"
+        type="time">
 
-          <option value="">
-            Loading questions...
-          </option>
+      <input
+        id="birthplace"
+        type="text"
+        placeholder="Birth Place"
+        >
 
-        </select>
+      <select
+        id="question"
+        >
 
-        <button
-          id="submitBtn"
-          type="submit">
+        <option>
+          Loading...
+        </option>
 
-          Book Now
+      </select>
 
-        </button>
+      <button
+        id="submitBtn"
+        type="submit">
 
-      </form>
+        Book Now
 
-      <div id="message"></div>
+      </button>
 
-    </div>
+    </form>
+
+    <div id="message"></div>
 
   </div>
 
-  <script src="app.js"></script>
+</div>
+
+<script src="app.js"></script>
 
 </body>
 </html>
