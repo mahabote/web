@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fortune Telling Registration</title>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <style>
+    body {
+      background: #f5f5f5;
+      padding: 30px;
+    }
+
+    .form-card {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card form-card z-depth-2">
+
+```
+<h4 class="page-title">
+  Fortune Telling Registration
+</h4>
+
+<form id="fortuneForm">
+
+  <div class="row">
+
+    <div class="input-field col s12 m6">
+      <input id="name" type="text" required>
+      <label for="name">Full Name</label>
+    </div>
+
+    <div class="input-field col s12 m6">
+      <input id="customerId" type="text" required>
+      <label for="customerId">ID Number</label>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="input-field col s12">
+      <input id="email" type="email" required>
+      <label for="email">Email</label>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="input-field col s12 m6">
+      <input id="birthdate" type="date" required>
+      <label class="active" for="birthdate">
+        Birth Date
+      </label>
+    </div>
+
+    <div class="input-field col s12 m6">
+      <input id="birthtime" type="time">
+      <label class="active" for="birthtime">
+        Birth Time
+      </label>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="input-field col s12 m6">
+      <input id="birthplace" type="text" required>
+      <label for="birthplace">
+        Birth Place
+      </label>
+    </div>
+
+    <div class="input-field col s12 m6">
+
+      <select id="question" required>
+        <option value="" disabled selected>
+          Loading...
+        </option>
+      </select>
+
+      <label>Question</label>
+
+    </div>
+
+  </div>
+
+  <div class="btn-container">
+    <button
+      id="btn"
+      type="button"
+      class="btn waves-effect waves-light purple"
+      onclick="submitForm()">
+      Book Now
+    </button>
+  </div>
+
+</form>
+```
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+
+const API_URL =
+  "YOUR_APPS_SCRIPT_WEBAPP_URL";
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
+
+    loadQuestions();
+
+  }
+);
+
+async function loadQuestions() {
+
+  try {
+
+    const response =
+      await fetch(API_URL);
+
+    const data =
+      await response.json();
+
+    const select =
+      document.getElementById("question");
+
+    select.innerHTML = "";
+
+    data.forEach(item => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = item;
+      option.textContent = item;
+
+      select.appendChild(option);
+
+    });
+
+    M.FormSelect.init(
+      document.querySelectorAll("select")
+    );
+
+  }
+  catch(error) {
+
+    console.error(error);
+
+    M.toast({
+      html: "Unable to load questions"
+    });
+
+  }
+
+}
+
+async function submitForm() {
+
+  const userInfo = {
+
+    customerId:
+      document.getElementById(
+        "customerId"
+      ).value,
+
+    name:
+      document.getElementById(
+        "name"
+      ).value,
+
+    email:
+      document.getElementById(
+        "email"
+      ).value,
+
+    birthdate:
+      document.getElementById(
+        "birthdate"
+      ).value,
+
+    birthtime:
+      document.getElementById(
+        "birthtime"
+      ).value,
+
+    birthplace:
+      document.getElementById(
+        "birthplace"
+      ).value,
+
+    question:
+      document.getElementById(
+        "question"
+      ).value
+
+  };
+
+  if (
+    !userInfo.name ||
+    !userInfo.customerId ||
+    !userInfo.email
+  ) {
+
+    M.toast({
+      html: "Please complete all required fields"
+    });
+
+    return;
+  }
+
+  try {
+
+    await fetch(
+      API_URL,
+      {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(userInfo)
+      }
+    );
+
+    M.toast({
+      html: "Registration Saved"
+    });
+
+    document
+      .getElementById(
+        "fortuneForm"
+      )
+      .reset();
+
+    M.updateTextFields();
+
+  }
+  catch(error) {
+
+    console.error(error);
+
+    M.toast({
+      html: "Submission Failed"
+    });
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
